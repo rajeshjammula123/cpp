@@ -1,0 +1,40 @@
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end());
+        vector<vector<int>> result;
+        vector<int> current;
+        backtrack(candidates, target, 0, current, result);
+        return result;
+    }
+
+private:
+    void backtrack(vector<int>& candidates, int target, int index, vector<int>& current, vector<vector<int>>& result) {
+        if (target == 0) {
+            result.push_back(current);
+            return;
+        }
+
+        for (int i = index; i < candidates.size(); i++) {
+            // Pruning: if current element is greater than target, 
+            // no need to check elements after it (since they are sorted)
+            if (candidates[i] > target) break;
+
+            // Skip duplicates: If this element is the same as the previous one
+            // AND we are not at the start of our current choice level.
+            if (i > index && candidates[i] == candidates[i - 1]) continue;
+
+            current.push_back(candidates[i]);
+            
+            // Move to i + 1 because we can't reuse the same element
+            backtrack(candidates, target - candidates[i], i + 1, current, result);
+            
+            current.pop_back(); // Backtrack
+        }
+    }
+};
